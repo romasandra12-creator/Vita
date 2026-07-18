@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Особливий квест для Віти ✨</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&family=Montserrat:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-creme: #fcf9f5;
+            --emerald-forest: #1b4332;
+            --sage-leaf: #40916c;
+            --rose-petal: #ffb5a7;
+            --text-dark: #2d3748;
+            --text-soft: #718096;
+            --gold: #d97706;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-creme);
+            color: var(--text-dark);
+            overflow-x: hidden;
+            font-family: 'Montserrat', sans-serif;
+            line-height: 1.8;
+        }
+
+        h1, h2, h3, .quest-title {
+            font-family: 'Playfair Display', serif;
+            font-weight: 400;
+        }
+
+        /* Музичний плеєр */
+        .audio-control {
+            position: fixed;
+            top: 25px;
+            right: 25px;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            padding: 10px 20px;
+            border-radius: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 11px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            border: 1px solid rgba(27, 67, 50, 0.1);
+            transition: all 0.4s ease;
+        }
+
+        /* Головний екран */
+        .hero {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background: linear-gradient(to bottom, rgba(255, 245, 245, 0.5), rgba(64, 145, 108, 0.08));
+            padding: 20px;
+            position: relative;
+        }
+
+        .hero h1 {
+            font-size: 3.8rem;
+            color: var(--emerald-forest);
+            margin-bottom: 20px;
+            letter-spacing: 1px;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 650px;
+            color: var(--text-soft);
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            margin-bottom: 30px;
+        }
+
+        /* Загальний статус квесту нагорі */
+        .quest-status-bar {
+            background: white;
+            padding: 15px 30px;
+            border-radius: 50px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.02);
+            display: flex;
+            gap: 20px;
+            font-size: 0.9rem;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+        .status-dot {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-soft);
+            transition: color 0.3s ease;
+        }
+        .status-dot.completed {
+            color: var(--sage-leaf);
+            font-weight: 600;
+        }
+
+        /* Галерея Polaroids (20 фото) */
+        .gallery-section {
+            background: #fdfbf9;
+            padding: 100px 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(0,0,0,0.02);
+        }
+        .gallery-section h2 { font-size: 2.8rem; color: var(--emerald-forest); margin-bottom: 40px; }
+        .gallery-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .photo-frame {
+            background: white;
+            padding: 16px 16px 30px 16px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.03);
+            transform: rotate(var(--r));
+            transition: all 0.4s ease;
+            width: 280px;
+        }
+        .photo-frame:hover {
+            transform: rotate(0deg) scale(1.05);
+            z-index: 10;
+        }
+        .photo-frame img { width: 100%; height: 240px; object-fit: cover; }
+        .photo-caption { margin-top: 15px; font-family: 'Caveat', cursive; font-size: 1.5rem; color: var(--emerald-forest); }
+
+        /* СЕКЦІЯ КВЕСТІВ */
+        .adventure-zone {
+            padding: 100px 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .zone-intro {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+        .zone-intro h2 { font-size: 2.5rem; color: var(--emerald-forest); margin-bottom: 15px; }
+
+        .quest-container {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.02);
+            border: 1px solid rgba(27, 67, 50, 0.05);
+            margin-bottom: 40px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        .quest-container.locked {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+        .quest-badge {
+            position: absolute;
+            top: -15px; left: 30px;
+            background: var(--emerald-forest);
+            color: white;
+            padding: 4px 15px;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-radius: 4px;
+        }
+        .quest-title { font-size: 1.6rem; color: var(--emerald-forest); margin-bottom: 20px; margin-top: 10px; }
+        .quest-desc { color: var(--text-soft); margin-bottom: 25px; font-size: 0.95rem; }
+
+        /* Інтерактивні елементи Рівня 1 */
+        .broker-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        .broker-option {
+            background: var(--bg-creme);
+            border: 1px solid #e2e8f0;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+        }
+        .broker-option:hover { border-color: var(--sage-leaf); background: #fffcf9; }
+        .broker-option.correct { background: #d1fae5; border-color: var(--sage-leaf); color: #065f46; font-weight: 600; }
+
+        /* Інтерактивні елементи Рівня 2 */
+        .pack-items {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            justify-content: center;
+        }
+        .pack-btn {
+            background: white;
+            border: 1px solid #cbd5e1;
+            padding: 10px 20px;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        }
+        .pack-btn:hover { border-color: var(--emerald-forest); }
+        .pack-btn.selected-good { background: var(--emerald-forest); color: white; border-color: var(--emerald-forest); }
+        .pack-btn.selected-bad { background: #fee2e2; color: #991b1b; border-color: #f87171; }
+
+        /* Інтерактивні елементи Рівня 3 */
+        .opel-dashboard {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+        .seat-selection {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .seat-btn {
+            background: var(--bg-creme);
+            border: 1px solid #e2e8f0;
+            padding: 12px 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .seat-btn:hover { border-color: #dc2626; }
+        .seat-btn.active-driver { background: #fee2e2; border-color: #dc2626; color: #991b1b; font-weight: 600; }
+
+        /* Фінальна кнопка */
+        .final-unlock-zone {
+            text-align: center;
+            margin-top: 60px;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.6s ease;
+        }
+        .cta-btn {
+            background-color: var(--emerald-forest);
+            color: white;
+            padding: 20px 60px;
+            border: none;
+            font-size: 0.95rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-radius: 4px;
+            box-shadow: 0 10px 30px rgba(27, 67, 50, 0.2);
+        }
+        .cta-btn:hover { background-color: #112a1f; transform: translateY(-2px); }
+
+        /* Модальне вікно */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(27, 67, 50, 0.5);
+            backdrop-filter: blur(10px);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .modal-content {
+            background: #fffcf9;
+            padding: 60px 45px;
+            max-width: 650px;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 35px 70px rgba(0,0,0,0.15);
+            border-radius: 4px;
+            border: 1px solid rgba(27, 67, 50, 0.08);
+            animation: slideUp 0.6s ease;
+        }
+        .close-modal { position: absolute; top: 20px; right: 25px; font-size: 28px; cursor: pointer; color: var(--text-soft); }
+        .modal-content h2 { font-size: 2.6rem; color: var(--emerald-forest); margin-bottom: 25px; }
+        .modal-content p { font-size: 1.05rem; color: #4a5568; margin-bottom: 20px; text-align: justify; }
+        .modal-content .highlight-text {
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            font-size: 1.15rem;
+            color: var(--emerald-forest);
+            line-height: 1.9;
+            border-left: 3px solid var(--rose-petal);
+            padding-left: 20px;
+            text-align: left;
+            margin: 30px 0;
+        }
+
+        /* Футер */
+        .dev-footer { padding: 80px 20px; background: #112a1f; color: #f7fafc; text-align: center; }
+        .dev-box { max-width: 450px; margin: 0 auto; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 30px; }
+        .dev-box h4 { font-size: 0.75rem; letter-spacing: 3px; text-transform: uppercase; color: var(--rose-petal); margin-bottom: 12px; }
+        .dev-box p { font-size: 0.9rem; opacity: 0.7; margin-bottom: 10px; font-weight: 300; }
+        .dev-date { font-size: 0.8rem; opacity: 0.4; letter-spacing: 1px; }
+
+        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+    <!-- Фоновий трек -->
+    <audio id="bg-music" loop>
+        <source src="music.mp3" type="audio/mpeg">
+    </audio>
+    <div class="audio-control" onclick="toggleMusic()">
+        <span id="music-icon">🎵</span> &nbsp; <span id="music-text">Увімкнути музику</span>
+    </div>
+
+    <!-- Вітальний екран -->
+    <section class="hero">
+        <h1>З днем народження!</h1>
+        <p>Найтепліше привітання для дівчини, яка вміє балансувати між точними цифрами дебету-кредиту та романтикою зоряного неба!</p>
+        
+        <div class="quest-status-bar">
+            <div class="status-dot" id="status1">⭕ Рівень 1</div>
+            <div class="status-dot" id="status2">⭕ Рівень 2</div>
+            <div class="status-dot" id="status3">⭕ Рівень 3</div>
+        </div>
+    </section>
+
+    <!-- Колекція спогадів (20 photo) -->
+    <section class="gallery-section">
+        <h2>Атмосфера твоїх пригод</h2>
+        <div class="gallery-container">
+            <div class="photo-frame" style="--r: -2deg;"><img src="photo1.jpg" alt="1"><div class="photo-caption">Безтурботне дитинство</div></div>
+            <div class="photo-frame" style="--r: 1deg;"><img src="photo2.jpg" alt="2"><div class="photo-caption">Теплі спогади</div></div>
+            <div class="photo-frame" style="--r: -3deg;"><img src="photo3.jpg" alt="3"><div class="photo-caption">Миті, що гріють</div></div>
+            <div class="photo-frame" style="--r: 2deg;"><img src="photo4.jpg" alt="4"><div class="photo-caption">Татова донечка</div></div>
+            <div class="photo-frame" style="--r: -1deg;"><img src="photo5.jpg" alt="5"><div class="photo-caption">Особлива атмосфера</div></div>
+            <div class="photo-frame" style="--r: 3deg;"><img src="photo6.jpg" alt="6"><div class="photo-caption">Твій чудовий день</div></div>
+            <div class="photo-frame" style="--r: -2deg;"><img src="photo7.jpg" alt="7"><div class="photo-caption">Найкращі спогади</div></div>
+            <div class="photo-frame" style="--r: 1deg;"><img src="photo8.jpg" alt="8"><div class="photo-caption">Спіймати сонце</div></div>
+            <div class="photo-frame" style="--r: -3deg;"><img src="photo9.jpg" alt="9"><div class="photo-caption">Натхнення в очах</div></div>
+            <div class="photo-frame" style="--r: 2deg;"><img src="photo10.jpg" alt="10"><div class="photo-caption">Зупинити мить</div></div>
+            <div class="photo-frame" style="--r: -1deg;"><img src="photo11.jpg" alt="11"><div class="photo-caption">Краса навколо</div></div>
+            <div class="photo-frame" style="--r: 4deg;"><img src="photo12.jpg" alt="12"><div class="photo-caption"></div></div>
+            <div class="photo-frame" style="--r: -2deg;"><img src="photo13.jpg" alt="13"><div class="photo-caption">Стиль!</div></div>
+            <div class="photo-frame" style="--r: 3deg;"><img src="photo14.jpg" alt="14"><div class="photo-caption">Теплота моменту</div></div>
+            <div class="photo-frame" style="--r: -3deg;"><img src="photo15.jpg" alt="15"><div class="photo-caption">Щасливі миті</div></div>
+            <div class="photo-frame" style="--r: 2deg;"><img src="photo16.jpg" alt="16"><div class="photo-caption">Вперед до мрій</div></div>
+            <div class="photo-frame" style="--r: -1deg;"><img src="photo17.jpg" alt="17"><div class="photo-caption">Вечірня тиша</div></div>
+            <div class="photo-frame" style="--r: 3deg;"><img src="photo18.jpg" alt="18"><div class="photo-caption"></div></div>
+            <div class="photo-frame" style="--r: -2deg;"><img src="photo19.jpg" alt="19"><div class="photo-caption"></div></div>
+            <div class="photo-frame" style="--r: 1deg;"><img src="photo20.jpg" alt="20"><div class="photo-caption">Будь найщасливішою 🥂</div></div>
+        </div>
+    </section>
+
+    <!-- ЗОНА КВЕСТІВ -->
+    <section class="adventure-zone">
+        <div class="zone-intro">
+            <h2>🔐 Лінійка випробувань</h2>
+            <p style="color: var(--text-soft);">Пройди три етапи, щоб активувати замок конфіденційного листа.</p>
+        </div>
+
+        <!-- Рівень 1 -->
+        <div class="quest-container" id="q1">
+            <span class="quest-badge">Етап 1</span>
+            <div class="quest-title">Аналіз брокерського портфеля</div>
+            <div class="quest-desc">Віто, як досвідчений фінансист, визнач, яка інвестиція цього року принесе тобі найбільше справжнього життєвого натхнення та радості? Оберіть один варіант:</div>
+            <div class="broker-grid">
+                <div class="broker-option" onclick="solveQ1(this, false)">Акції довгострокових фондів</div>
+                <div class="broker-option" onclick="solveQ1(this, true)">✨ Щастя, здоров'я та душевний баланс</div>
+                <div class="broker-option" onclick="solveQ1(this, false)">Ф'ючерси на сталь і зерно</div>
+            </div>
+        </div>
+
+        <!-- Рівень 2 -->
+        <div class="quest-container locked" id="q2">
+            <span class="quest-badge">Етап 2</span>
+            <div class="quest-title">Збори в експедицію: Намет та Гори</div>
+            <div class="quest-desc">Для ідеального вечора біля багаття потрібні правильні речі. Клікни та збери у рюкзак лише 2 найважливіші предмети:</div>
+            <div class="pack-items">
+                <button class="pack-btn" onclick="solveQ2(this, true)">🔥 Тепле худі</button>
+                <button class="pack-btn" onclick="solveQ2(this, false)">📊 Квартальний звіт</button>
+                <button class="pack-btn" onclick="solveQ2(this, true)">⛺ Надійний спальник</button>
+                <button class="pack-btn" onclick="solveQ2(this, false)">🖨️ Калькулятор</button>
+            </div>
+        </div>
+
+        <!-- Рівень 3 -->
+        <div class="quest-container locked" id="q3">
+            <span class="quest-badge">Етап 3</span>
+            <div class="quest-title">Екіпаж червоного Опеля</div>
+            <div class="quest-desc">Ти впевнено тримаєш кермо своєї автівки. Залишився фінальний штрих — хто має зайняти сусіднє пасажирське крісло для ідеальної мандрівки життя?</div>
+            <div class="opel-dashboard">
+                <div class="seat-selection">
+                    <button class="seat-btn" onclick="solveQ3(this, false)">Папка з документами</button>
+                    <button class="seat-btn" onclick="solveQ3(this, true)">🧔 Коханий чоловік</button>
+                    <button class="seat-btn" onclick="solveQ3(this, false)">Коробка офісного паперу</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Зона відкриття -->
+        <div class="final-unlock-zone" id="finalZone">
+            <button class="cta-btn" onclick="openModal()">🔓 Читати фінальний лист</button>
+        </div>
+    </section>
+
+    <!-- Секретна модалка привітання -->
+    <div id="wishModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal()">&times;</span>
+            <h2>Дорога Віто!</h2>
+            <p>
+                Ти неймовірна людина, в чиєму житті дивовижним чином переплітаються точність бухгалтерії та романтичний дух пригод. Ти легко підкорюєш складні робочі звіти, впевнено ведеш свій яскравий червоний автомобіль і знаходиш справжнє перезавантаження в тиші дикої природи.
+            </p>
+            <div class="highlight-text">
+                Нехай цей рік принесе тобі максимум щирої радості, абсолютну легкість у душі та реалізацію найзаповітніших мрій. І нехай дуже скоро на сусідньому сидінні твого Опеля з'явиться та сама людина, міцний штурман, який розділить з тобою найзатишніші ночі в наметах та зробить кожну твою дорогу безтурботною і щасливою!»
+            </div>
+            <p style="text-align: center; font-weight: bold; color: var(--emerald-forest);">
+                З Днем Народження! 🎉🎂✨
+            </p>
+        </div>
+    </div>
+
+    <!-- Підпис розробників -->
+    <footer class="dev-footer">
+        <div class="dev-box">
+            <h4>Особливий подарунок</h4>
+            <p>Створено з любов'ю: Андрій та Саша.</p>
+            <div class="dev-date">19.07.2026</div>
+        </div>
+    </footer>
+
+    <script>
+        // Музика
+        const music = document.getElementById('bg-music');
+        function toggleMusic() {
+            const musicIcon = document.getElementById('music-icon');
+            const musicText = document.getElementById('music-text');
+            if (music.paused) {
+                music.play().catch(e => console.log("Клік активовано"));
+                musicIcon.innerText = "⏸️"; musicText.innerText = "Пауза";
+            } else {
+                music.pause();
+                musicIcon.innerText = "🎵"; musicText.innerText = "Увімкнути музику";
+            }
+        }
+
+        let stage1 = false, stage2 = false, stage3 = false;
+        let q2CorrectCount = 0;
+
+        // Логіка 1 квесту
+        function solveQ1(element, isCorrect) {
+            if(!isCorrect) { alert("Хороший актив, але спробуй знайти дещо цінніше! 😉"); return; }
+            element.classList.add('correct');
+            document.getElementById('status1').innerText = "🟢 Рівень 1";
+            document.getElementById('status1').classList.add('completed');
+            stage1 = true;
+            document.getElementById('q2').classList.remove('locked');
+        }
+
+        // Логіка 2 квесту
+        function solveQ2(button, isGood) {
+            if (button.classList.contains('selected-good') || button.classList.contains('selected-bad')) return;
+            if(!isGood) {
+                button.classList.add('selected-bad');
+                alert("Офісна рутина не поміститься в рюкзак для гір! Обирай комфорт 🌲");
+                return;
+            }
+            button.classList.add('selected-good');
+            q2CorrectCount++;
+            if(q2CorrectCount === 2) {
+                document.getElementById('status2').innerText = "🟢 Рівень 2";
+                document.getElementById('status2').classList.add('completed');
+                stage2 = true;
+                document.getElementById('q3').classList.remove('locked');
+            }
+        }
+
+        // Логіка 3 квесту
+        function solveQ3(button, isCorrect) {
+            if(!isCorrect) { alert("Цей пасажир не вміє розкладати намет під зливою! Обери іншого 🚗"); return; }
+            button.classList.add('active-driver');
+            document.getElementById('status3').innerText = "🟢 Рівень 3";
+            document.getElementById('status3').classList.add('completed');
+            stage3 = true;
+            
+            // Фінальне відкриття
+            const finalZone = document.getElementById('finalZone');
+            finalZone.style.display = 'block';
+            setTimeout(() => { finalZone.style.opacity = '1'; }, 50);
+            setTimeout(openModal, 800);
+        }
+
+        // Керування модалкою
+        function openModal() { document.getElementById('wishModal').style.display = 'flex'; }
+        function closeModal() { document.getElementById('wishModal').style.display = 'none'; }
+        window.onclick = function(e) { if (e.target == document.getElementById('wishModal')) closeModal(); }
+    </script>
+</body>
+</html>
