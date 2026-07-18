@@ -89,29 +89,6 @@
             margin-bottom: 30px;
         }
 
-        /* Загальний статус квесту нагорі */
-        .quest-status-bar {
-            background: white;
-            padding: 15px 30px;
-            border-radius: 50px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.02);
-            display: flex;
-            gap: 20px;
-            font-size: 0.9rem;
-            border: 1px solid rgba(0,0,0,0.05);
-        }
-        .status-dot {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            color: var(--text-soft);
-            transition: color 0.3s ease;
-        }
-        .status-dot.completed {
-            color: var(--sage-leaf);
-            font-weight: 600;
-        }
-
         /* Галерея Polaroids (20 фото) */
         .gallery-section {
             background: #fdfbf9;
@@ -241,8 +218,8 @@
             cursor: pointer;
             transition: all 0.3s;
         }
-        .seat-btn:hover { border-color: #dc2626; }
-        .seat-btn.active-driver { background: #fee2e2; border-color: #dc2626; color: #991b1b; font-weight: 600; }
+        .seat-btn:hover { border-color: var(--sage-leaf); }
+        .seat-btn.active-passenger { background: #d1fae5; border-color: var(--sage-leaf); color: #065f46; font-weight: 600; }
 
         /* Фінальна кнопка */
         .final-unlock-zone {
@@ -267,7 +244,7 @@
         }
         .cta-btn:hover { background-color: #112a1f; transform: translateY(-2px); }
 
-        /* Модальне вікно */
+        /* АДАПТИВНЕ МОДАЛЬНЕ ВІКНО */
         .modal {
             display: none;
             position: fixed;
@@ -277,21 +254,33 @@
             z-index: 2000;
             justify-content: center;
             align-items: center;
-            padding: 20px;
+            padding: 15px;
         }
         .modal-content {
             background: #fffcf9;
-            padding: 60px 45px;
+            padding: 50px 40px;
+            width: 100%;
             max-width: 650px;
+            max-height: 85vh;
+            overflow-y: auto;
             text-align: center;
             position: relative;
             box-shadow: 0 35px 70px rgba(0,0,0,0.15);
-            border-radius: 4px;
+            border-radius: 8px;
             border: 1px solid rgba(27, 67, 50, 0.08);
             animation: slideUp 0.6s ease;
+            -webkit-overflow-scrolling: touch;
         }
-        .close-modal { position: absolute; top: 20px; right: 25px; font-size: 28px; cursor: pointer; color: var(--text-soft); }
-        .modal-content h2 { font-size: 2.6rem; color: var(--emerald-forest); margin-bottom: 25px; }
+        .close-modal { 
+            position: absolute; 
+            top: 15px; 
+            right: 20px; 
+            font-size: 32px; 
+            cursor: pointer; 
+            color: var(--text-soft); 
+            z-index: 10;
+        }
+        .modal-content h2 { font-size: 2.3rem; color: var(--emerald-forest); margin-bottom: 20px; }
         .modal-content p { font-size: 1.05rem; color: #4a5568; margin-bottom: 20px; text-align: justify; }
         .modal-content .highlight-text {
             font-family: 'Playfair Display', serif;
@@ -300,10 +289,15 @@
             color: var(--emerald-forest);
             line-height: 1.9;
             border-left: 3px solid var(--rose-petal);
-            padding-left: 20px;
+            padding-left: 15px;
             text-align: left;
-            margin: 30px 0;
+            margin: 25px 0;
         }
+
+        /* Стилізація повзунка скролу в модалці */
+        .modal-content::-webkit-scrollbar { width: 6px; }
+        .modal-content::-webkit-scrollbar-track { background: transparent; }
+        .modal-content::-webkit-scrollbar-thumb { background: var(--rose-petal); border-radius: 10px; }
 
         /* Футер */
         .dev-footer { padding: 80px 20px; background: #112a1f; color: #f7fafc; text-align: center; }
@@ -311,6 +305,22 @@
         .dev-box h4 { font-size: 0.75rem; letter-spacing: 3px; text-transform: uppercase; color: var(--rose-petal); margin-bottom: 12px; }
         .dev-box p { font-size: 0.9rem; opacity: 0.7; margin-bottom: 10px; font-weight: 300; }
         .dev-date { font-size: 0.8rem; opacity: 0.4; letter-spacing: 1px; }
+
+        /* Мобільні адаптивні стилі */
+        @media (max-width: 600px) {
+            .hero h1 { font-size: 2.3rem; }
+            .hero p { font-size: 1rem; }
+            .gallery-section h2 { font-size: 1.8rem; }
+            .gallery-section { padding: 60px 10px; }
+            .adventure-zone { padding: 60px 15px; }
+            .quest-container { padding: 30px 15px; }
+            .quest-title { font-size: 1.25rem; }
+            
+            .modal-content { padding: 40px 20px 30px 20px; }
+            .modal-content h2 { font-size: 1.7rem; }
+            .modal-content p { font-size: 0.95rem; line-height: 1.6; }
+            .modal-content .highlight-text { font-size: 1rem; line-height: 1.7; margin: 20px 0; padding-left: 10px; }
+        }
 
         @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
     </style>
@@ -329,12 +339,6 @@
     <section class="hero">
         <h1>З днем народження!</h1>
         <p>Найтепліше привітання для дівчини, яка вміє балансувати між точними цифрами дебету-кредиту та романтикою зоряного неба!</p>
-        
-        <div class="quest-status-bar">
-            <div class="status-dot" id="status1">⭕ Рівень 1</div>
-            <div class="status-dot" id="status2">⭕ Рівень 2</div>
-            <div class="status-dot" id="status3">⭕ Рівень 3</div>
-        </div>
     </section>
 
     <!-- Колекція спогадів (20 photo) -->
@@ -352,14 +356,14 @@
             <div class="photo-frame" style="--r: -3deg;"><img src="photo9.jpg" alt="9"><div class="photo-caption">Натхнення в очах</div></div>
             <div class="photo-frame" style="--r: 2deg;"><img src="photo10.jpg" alt="10"><div class="photo-caption">Зупинити мить</div></div>
             <div class="photo-frame" style="--r: -1deg;"><img src="photo11.jpg" alt="11"><div class="photo-caption">Краса навколо</div></div>
-            <div class="photo-frame" style="--r: 4deg;"><img src="photo12.jpg" alt="12"><div class="photo-caption"></div></div>
+            <div class="photo-frame" style="--r: 4deg;"><img src="photo12.jpg" alt="12"><div class="photo-caption">Світлий момент</div></div>
             <div class="photo-frame" style="--r: -2deg;"><img src="photo13.jpg" alt="13"><div class="photo-caption">Стиль!</div></div>
             <div class="photo-frame" style="--r: 3deg;"><img src="photo14.jpg" alt="14"><div class="photo-caption">Теплота моменту</div></div>
             <div class="photo-frame" style="--r: -3deg;"><img src="photo15.jpg" alt="15"><div class="photo-caption">Щасливі миті</div></div>
             <div class="photo-frame" style="--r: 2deg;"><img src="photo16.jpg" alt="16"><div class="photo-caption">Вперед до мрій</div></div>
             <div class="photo-frame" style="--r: -1deg;"><img src="photo17.jpg" alt="17"><div class="photo-caption">Вечірня тиша</div></div>
-            <div class="photo-frame" style="--r: 3deg;"><img src="photo18.jpg" alt="18"><div class="photo-caption"></div></div>
-            <div class="photo-frame" style="--r: -2deg;"><img src="photo19.jpg" alt="19"><div class="photo-caption"></div></div>
+            <div class="photo-frame" style="--r: 3deg;"><img src="photo18.jpg" alt="18"><div class="photo-caption">Усмішка</div></div>
+            <div class="photo-frame" style="--r: -2deg;"><img src="photo19.jpg" alt="19"><div class="photo-caption">Натхнення</div></div>
             <div class="photo-frame" style="--r: 1deg;"><img src="photo20.jpg" alt="20"><div class="photo-caption">Будь найщасливішою 🥂</div></div>
         </div>
     </section>
@@ -425,7 +429,7 @@
                 Ти неймовірна людина, в чиєму житті дивовижним чином переплітаються точність бухгалтерії та романтичний дух пригод. Ти легко підкорюєш складні робочі звіти, впевнено ведеш свій яскравий червоний автомобіль і знаходиш справжнє перезавантаження в тиші дикої природи.
             </p>
             <div class="highlight-text">
-                Нехай цей рік принесе тобі максимум щирої радості, абсолютну легкість у душі та реалізацію найзаповітніших мрій. І нехай дуже скоро на сусідньому сидінні твого Опеля з'явиться та сама людина, міцний штурман, який розділить з тобою найзатишніші ночі в наметах та зробить кожну твою дорогу безтурботною і щасливою!
+                «Нехай цей рік принесе тобі максимум щирої радості, абсолютну легкість у душі та реалізацію найзаповітніших мрій. І нехай дуже скоро на сусідньому сидінні твого Опеля з'явиться та сама людина, міцний штурман, який розділить з тобою найзатишніші ночі в наметах та зробить кожну твою дорогу безтурботною і щасливою!»
             </div>
             <p style="text-align: center; font-weight: bold; color: var(--emerald-forest);">
                 З Днем Народження! 🎉🎂✨
@@ -436,7 +440,7 @@
     <!-- Підпис розробників -->
     <footer class="dev-footer">
         <div class="dev-box">
-            <h4>Особливий подарунок</h4>
+            <h4>Особливий подарок</h4>
             <p>Створено з любов'ю: Андрій та Саша.</p>
             <div class="dev-date">19.07.2026</div>
         </div>
@@ -464,8 +468,6 @@
         function solveQ1(element, isCorrect) {
             if(!isCorrect) { alert("Хороший актив, але спробуй знайти дещо цінніше! 😉"); return; }
             element.classList.add('correct');
-            document.getElementById('status1').innerText = "🟢 Рівень 1";
-            document.getElementById('status1').classList.add('completed');
             stage1 = true;
             document.getElementById('q2').classList.remove('locked');
         }
@@ -481,8 +483,6 @@
             button.classList.add('selected-good');
             q2CorrectCount++;
             if(q2CorrectCount === 2) {
-                document.getElementById('status2').innerText = "🟢 Рівень 2";
-                document.getElementById('status2').classList.add('completed');
                 stage2 = true;
                 document.getElementById('q3').classList.remove('locked');
             }
@@ -491,9 +491,7 @@
         // Логіка 3 квесту
         function solveQ3(button, isCorrect) {
             if(!isCorrect) { alert("Цей пасажир не вміє розкладати намет під зливою! Обери іншого 🚗"); return; }
-            button.classList.add('active-driver');
-            document.getElementById('status3').innerText = "🟢 Рівень 3";
-            document.getElementById('status3').classList.add('completed');
+            button.classList.add('active-passenger');
             stage3 = true;
             
             // Фінальне відкриття
